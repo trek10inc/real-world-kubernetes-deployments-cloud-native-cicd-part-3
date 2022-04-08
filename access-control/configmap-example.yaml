@@ -1,0 +1,27 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  mapRoles: |
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::111122223333:role/trek10-admin
+      username: trek10-admin
+    - groups:
+      - trek10-deploy
+      rolearn: arn:aws:iam::111122223333:role/codebuild-example-foo-service-role
+      username: codebuild-example-foo-service-role
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::111122223333:role/eks-nodegroup-role-example-foo
+      username: system:node:{{EC2PrivateDNSName}}
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-04-01T22:48:48Z"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "425349"
+  uid: 97609975-7891-4849-9977-e2d4d54f4773

@@ -1,0 +1,20 @@
+version: 0.2
+
+env:
+  variables:
+    DEPLOYMENT_MANIFEST_DIR: "deployment-manifests"
+    NON_DEPLOYMENT_MANIFEST_DIR: "non-deployment-manifests"
+    CLUSTER_NAME: "example-foo-cluster"
+
+phases:
+  pre_build:
+    commands:
+      - echo "===== AWS Version ====="
+      - aws --version
+      - echo "===== Setup ~/.kube/config ====="
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
+
+  build:
+    commands:
+      - echo "===== Executing Deployment ====="
+      - /tmp/run.sh

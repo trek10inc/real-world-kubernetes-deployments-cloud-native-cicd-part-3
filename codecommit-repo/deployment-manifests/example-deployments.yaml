@@ -1,0 +1,60 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: example-foo
+  namespace: trek10
+  labels:
+    app: example-foo
+    deployment: foo
+    env: dev
+spec:
+  progressDeadlineSeconds: 60
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example-foo
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 30%
+      # maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: example-foo
+        deployment: foo
+        env: dev
+      annotations:
+        kubernetes.io/change-cause: ""
+    spec:
+      containers:
+      - image: "public.ecr.aws/i4a3l2a7/probeserver:latest"
+        name: example-foo
+        env:
+          - name: START_WAIT_SECS
+            value: '15'
+          - name: CRASH_FACTOR
+            value: '22'
+          - name: CONTENT
+            value: '{ "team": "foo", "version": "1.0.0" }'
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+            httpHeaders:
+              - name: Host
+                value: KubernetesLivenessProbe
+          initialDelaySeconds: 20
+          successThreshold: 1
+          failureThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+            httpHeaders:
+              - name: Host
+                value: KubernetesReadinessProbe
+          initialDelaySeconds: 5
+          successThreshold: 1
+          failureThreshold: 1
